@@ -26,10 +26,6 @@ class _SignInState extends State<SignIn> {
 
   signMeIn1() {
     if (formKey.currentState.validate()) {
-      //the following sets the state to loading, that is to let the user know something is happening by using the condition written in body of the scaffold
-      setState(() {
-        isLoading1 = true;
-      });
       //the following line uses the authMethods1 object creadted below
       // the email and text are provided to this function using the text editing controllers created above
       authMethods1
@@ -37,11 +33,16 @@ class _SignInState extends State<SignIn> {
               passwordTextEditingController1.text)
           .then((val) {
         print("$val");
-
-        //the below line is used to navigate the user to the home page, we are using push replacement instead of push so that the user upon clicking the back button doesn't come back to the sign up page.
-        //also as new route we are using the materialpageroute
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => ChatRoom()));
+        if (val != null) {
+          //the following sets the state to loading, that is to let the user know something is happening by using the condition written in body of the scaffold
+          setState(() {
+            isLoading1 = true;
+          });
+          //the below line is used to navigate the user to the home page, we are using push replacement instead of push so that the user upon clicking the back button doesn't come back to the sign up page.
+          //also as new route we are using the materialpageroute
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => ChatRoom()));
+        }
       });
     }
   }

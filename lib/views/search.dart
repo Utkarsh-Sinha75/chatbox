@@ -17,8 +17,8 @@ class _SearchState extends State<SearchScreen1> {
   QuerySnapshot searchSnapshot;
 
   //the following method is created to initiate the search
-  initiateSearch() async {
-    await databaseMethods
+  initiateSearch() {
+    databaseMethods
         .getUserByUsername1(searchTextEditingController.text)
         .then((val) {
       setState(() {
