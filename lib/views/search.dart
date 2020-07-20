@@ -1,7 +1,10 @@
+import 'package:chat_box/helper/constants.dart';
 import 'package:chat_box/services/database.dart';
 import 'package:chat_box/widgets/widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import 'conversation_screen.dart';
 
 class SearchScreen1 extends StatefulWidget {
   @override
@@ -35,13 +38,67 @@ class _SearchState extends State<SearchScreen1> {
             itemCount: searchSnapshot.documents.length,
             shrinkWrap: true,
             itemBuilder: (context, index) {
-              return SearchTile(
+              return searchTile1(
                 //the "name" is the key and index is the search result index
                 userName: searchSnapshot.documents[index].data["name"],
                 userEmail: searchSnapshot.documents[index].data["email"],
               );
             })
         : Container();
+  }
+
+  //create chatroom, send user to conversation screen, push replacement
+  createChatroomAndStartConversation1({String userName}) {
+    //the following line is used during trail to see if myname is getting assigned the correct value or not
+    print("${Constants1.myName1}");
+    //we are using a function to create the chatroom id
+    String chatRoomId = getChatRoomId(userName, Constants1.myName1);
+    //the userName passed to the above function is the one we enter to search for a person and myName is taken from helper function
+    List<String> users = [userName, Constants1.myName1];
+    //when we create map the datatype of the key will be string but the value will be dynamic
+    Map<String, dynamic> chatRoomMap = {
+      "users": users,
+      "chatRoomId": chatRoomId
+    };
+
+    DatabaseMethods().createChatRoom(chatRoomId, chatRoomMap);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ConversationScreen()));
+  }
+
+  Widget searchTile1({String userName, String userEmail}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        children: [
+          Column(
+            //the cross axis alignment is used to make all the elements of the container aligned
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(userName, style: mediumTextStyle1()),
+              Text(userEmail, style: mediumTextStyle1()),
+            ],
+          ),
+          Spacer(),
+          GestureDetector(
+            onTap: () {
+              createChatroomAndStartConversation1(userName: userName);
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Text(
+                "Message",
+                style: mediumTextStyle1(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -96,34 +153,11 @@ class _SearchState extends State<SearchScreen1> {
   }
 }
 
-//the following widget shows the search results in tile view
-class SearchTile extends StatelessWidget {
-  final String userName;
-  final String userEmail;
-  SearchTile({this.userName, this.userEmail});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: [
-          Column(
-            children: [
-              Text(userName, style: simpleTextStyle1()),
-              Text(userEmail, style: simpleTextStyle1()),
-            ],
-          ),
-          Spacer(),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.blue,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: Text("Message"),
-          ),
-        ],
-      ),
-    );
+//the following function is implemented to make sure the chatroomid is unique for each combination of people chatting and is same for those two people chatting
+getChatRoomId(String a, String b) {
+  if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+    return "$b\_$a";
+  } else {
+    return "$a\_$b";
   }
 }

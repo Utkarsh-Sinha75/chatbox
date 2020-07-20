@@ -9,9 +9,27 @@ class DatabaseMethods {
         .getDocuments();
   }
 
+  getUserByUseremail1(String userEmail) async {
+    return await Firestore.instance
+        .collection("users")
+        .where("email", isEqualTo: userEmail)
+        .getDocuments();
+  }
+
   //this function is used to update the user info in the database at the time of signup
   uploadUserInfo1(userMap1) {
     Firestore.instance.collection("users").add(userMap1).catchError((e) {
+      print(e.toString());
+    });
+  }
+
+  //this function is used to create chatrooms in database
+  createChatRoom(String chatRoomId, chatRoomMap) {
+    Firestore.instance
+        .collection("ChatRoom")
+        .document(chatRoomId)
+        .setData(chatRoomMap)
+        .catchError((e) {
       print(e.toString());
     });
   }

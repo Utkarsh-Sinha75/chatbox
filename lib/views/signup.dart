@@ -1,3 +1,4 @@
+import 'package:chat_box/helper/helperfunction.dart';
 import 'package:chat_box/services/auth.dart';
 import 'package:chat_box/services/database.dart';
 import 'package:chat_box/views/chatroomscreen.dart';
@@ -48,6 +49,12 @@ class _SignUpState extends State<SignUp> {
           setState(() {
             isLoading1 = true;
           });
+          //if the user is signed up successfully then the following saves his logged in status
+          HelperFunctions.saveUserLoggedInSharedPreference(true);
+          HelperFunctions.saveUserNameSharedPreference(
+              userNameTextEditingController1.text);
+          HelperFunctions.saveUserEmailSharedPreference(
+              emailTextEditingController1.text);
           //below function is used to upload the user data in database using the above created map
           databaseMethods1.uploadUserInfo1(userMap1);
           //the below line is used to navigate the user to the home page, we are using push replacement instead of push so that the user upon clicking the back button doesn't come back to the sign up page.
@@ -62,6 +69,7 @@ class _SignUpState extends State<SignUp> {
   //now we will create an instance of AuthMethods class which we created in the auth.dart so we can use it on our signup page
   AuthMethods1 authMethods1 = new AuthMethods1();
   DatabaseMethods databaseMethods1 = new DatabaseMethods();
+  HelperFunctions helperFunctions = new HelperFunctions();
 
   @override
   Widget build(BuildContext context) {
