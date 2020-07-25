@@ -41,7 +41,9 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: userIsLoggedIn ? ChatRoom() : Authenticate(),
+      home: userIsLoggedIn != null
+          ? (userIsLoggedIn ? ChatRoom() : Authenticate())
+          : Authenticate(),
     );
   }
 }

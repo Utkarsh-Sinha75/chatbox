@@ -63,7 +63,9 @@ class _SearchState extends State<SearchScreen1> {
 
     DatabaseMethods().createChatRoom(chatRoomId, chatRoomMap);
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ConversationScreen()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => ConversationScreen(chatRoomId)));
   }
 
   Widget searchTile1({String userName, String userEmail}) {
