@@ -43,6 +43,7 @@ class _SignInState extends State<SignIn> {
               .getUserByUseremail1(emailTextEditingController1.text)
               .then((val) {
             snapshotUserInfo1 = val;
+            print("${snapshotUserInfo1.documents[0].data["name"]}");
             HelperFunctions
                 //we are using [0] since we know that only one user will have the given email
                 .saveUserNameSharedPreference(

@@ -49,7 +49,9 @@ class _ChatRoomState extends State<ChatRoom> {
 
   getUserInfo1() async {
     Constants1.myName1 = await HelperFunctions.getUserNameSharedPreference();
-    print("${Constants1.myName1}");
+    Constants1.myLog1 = await HelperFunctions.getUserLoggedInSharedPreference();
+    //print("${Constants1.myLog1}");
+    //print("${Constants1.myName1}");
     databaseMethods.getChatRooms(Constants1.myName1).then((value) {
       setState(() {
         chatRoomStream = value;
@@ -71,6 +73,7 @@ class _ChatRoomState extends State<ChatRoom> {
           GestureDetector(
             onTap: () {
               authMethods1.signOut1();
+              HelperFunctions.saveUserLoggedInSharedPreference(false);
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
