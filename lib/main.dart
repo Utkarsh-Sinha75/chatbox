@@ -47,15 +47,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-class IamBlank extends StatefulWidget {
-  @override
-  _IamBlankState createState() => _IamBlankState();
-}
-
-class _IamBlankState extends State<IamBlank> {
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}

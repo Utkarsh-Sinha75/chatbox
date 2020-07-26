@@ -20,6 +20,21 @@ class _ChatRoomState extends State<ChatRoom> {
 //the following stream helps in showing all the chats
   Stream chatRoomStream;
 
+  String giveChatsAName(String chatID, String userName) {
+    List chatIDNew = chatID.split('_');
+    String first = chatIDNew[0];
+    String second = chatIDNew[1];
+
+    first = first.replaceAll(userName, '');
+    second = second.replaceAll(userName, '');
+
+    if (first == '') {
+      return chatIDNew[1];
+    } else {
+      return chatIDNew[0];
+    }
+  }
+
   Widget chatRoomList() {
     return StreamBuilder(
       stream: chatRoomStream,
@@ -28,13 +43,12 @@ class _ChatRoomState extends State<ChatRoom> {
             ? ListView.builder(
                 itemCount: snapshot.data.documents.length,
                 itemBuilder: (context, index) {
-                  return ChatRoomTile(
+                  String name = giveChatsAName(
                       snapshot.data.documents[index].data["chatRoomId"]
-                          //the following two lines help separate the username of the other person from the chatroomId
-                          .toString()
-                          .replaceAll("_", "")
-                          .replaceAll(Constants1.myName1, ""),
-                      snapshot.data.documents[index].data["chatRoomId"]);
+                          .toString(),
+                      Constants1.myName1);
+                  return ChatRoomTile(
+                      name, snapshot.data.documents[index].data["chatRoomId"]);
                 })
             : Container();
       },
@@ -49,7 +63,7 @@ class _ChatRoomState extends State<ChatRoom> {
 
   getUserInfo1() async {
     Constants1.myName1 = await HelperFunctions.getUserNameSharedPreference();
-    Constants1.myLog1 = await HelperFunctions.getUserLoggedInSharedPreference();
+    Constants1.myEmail1 = await HelperFunctions.getUserEmailSharedPreference();
     //print("${Constants1.myLog1}");
     //print("${Constants1.myName1}");
     databaseMethods.getChatRooms(Constants1.myName1).then((value) {
@@ -57,7 +71,6 @@ class _ChatRoomState extends State<ChatRoom> {
         chatRoomStream = value;
       });
     });
-    setState(() {});
   }
 
   @override
@@ -73,7 +86,7 @@ class _ChatRoomState extends State<ChatRoom> {
           GestureDetector(
             onTap: () {
               authMethods1.signOut1();
-              HelperFunctions.saveUserLoggedInSharedPreference(false);
+              HelperFunctions.removeValues();
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(

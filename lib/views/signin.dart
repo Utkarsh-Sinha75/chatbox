@@ -16,6 +16,10 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  AuthMethods1 authMethods1 = new AuthMethods1();
+  HelperFunctions helperFunctions = new HelperFunctions();
+  DatabaseMethods databaseMethods1 = new DatabaseMethods();
+
   //we can take the text from the TextField using the following
   TextEditingController emailTextEditingController1 =
       new TextEditingController();
@@ -29,30 +33,30 @@ class _SignInState extends State<SignIn> {
   //the following query snapshot facilitates to receive the query that the getUserByUseremail1 will return
   QuerySnapshot snapshotUserInfo1;
 
-  signMeIn1() {
+  signMeIn1() async {
     if (formKey.currentState.validate()) {
-      //the following line uses the authMethods1 object creadted below
+      //the following line uses the authMethods1 object created above
       // the email and text are provided to this function using the text editing controllers created above
       authMethods1
           .signInWithEmailAndPassword1(emailTextEditingController1.text,
               passwordTextEditingController1.text)
-          .then((val) {
+          .then((val) async {
         if (val != null) {
           //the following helps get the user data (here the username, which is saved as "name" under the database) using the email provided during signin using the below query
-          databaseMethods1
+          await databaseMethods1
               .getUserByUseremail1(emailTextEditingController1.text)
-              .then((val) {
+              .then((val) async {
             snapshotUserInfo1 = val;
-            print("${snapshotUserInfo1.documents[0].data["name"]}");
-            HelperFunctions
+            //print("${snapshotUserInfo1.documents[0].data["name"]}");
+            await HelperFunctions
                 //we are using [0] since we know that only one user will have the given email
                 .saveUserNameSharedPreference(
                     snapshotUserInfo1.documents[0].data["name"]);
           });
 
           //if the user is signed up successfully then the following saves his logged in status
-          HelperFunctions.saveUserLoggedInSharedPreference(true);
-          HelperFunctions.saveUserEmailSharedPreference(
+          await HelperFunctions.saveUserLoggedInSharedPreference(true);
+          await HelperFunctions.saveUserEmailSharedPreference(
               emailTextEditingController1.text);
 
           //the following sets the state to loading, that is to let the user know something is happening by using the condition written in body of the scaffold
@@ -68,10 +72,6 @@ class _SignInState extends State<SignIn> {
       });
     }
   }
-
-  AuthMethods1 authMethods1 = new AuthMethods1();
-  HelperFunctions helperFunctions = new HelperFunctions();
-  DatabaseMethods databaseMethods1 = new DatabaseMethods();
 
   @override
   Widget build(BuildContext context) {

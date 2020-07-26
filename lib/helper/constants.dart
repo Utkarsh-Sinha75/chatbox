@@ -2,4 +2,6 @@
 class Constants1 {
   static String myName1 = "";
   static bool myLog1;
+  static String name = "";
+  static String myEmail1 = "";
 }

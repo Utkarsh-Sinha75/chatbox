@@ -30,7 +30,7 @@ class HelperFunctions {
 
   static Future<bool> getUserLoggedInSharedPreference() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(sharedPreferenceUserLoggedInKey);
+    return prefs.getBool(sharedPreferenceUserLoggedInKey) ?? false;
   }
 
   static Future<String> getUserNameSharedPreference() async {
@@ -41,5 +41,12 @@ class HelperFunctions {
   static Future<String> getUserEmailSharedPreference() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(sharedPreferenceUserEmailKey);
+  }
+
+  static removeValues() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove("ISLOGGEDIN");
+    prefs.remove("USERNAMEKEY");
+    prefs.remove("USEREMAILKEY");
   }
 }
