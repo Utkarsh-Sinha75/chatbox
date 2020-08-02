@@ -3,6 +3,8 @@ import 'package:chat_box/services/database.dart';
 import 'package:chat_box/widgets/widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+//import 'package:ntp/ntp.dart';
+import 'package:true_time/true_time.dart';
 
 class ConversationScreen extends StatefulWidget {
   final String chatRoomId;
@@ -16,6 +18,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
   TextEditingController messageController = new TextEditingController();
 
   Stream chatMessageStream;
+
+  bool _initialized = false;
+  DateTime _currentTime;
+
+  @override
+  void initState() {
+    databaseMethods.getConversationMessages(widget.chatRoomId).then((value) {
+      setState(() {
+        chatMessageStream = value;
+      });
+    });
+    super.initState();
+    _initPlatformState();
+  }
 
   Widget chatMessageList() {
     return StreamBuilder(
@@ -35,27 +51,49 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-  sendMessage() {
+  /*Future<DateTime> timeset() async {
+    DateTime _myTime;
+    DateTime ntpTime;
+
+    _myTime = await NTP.now();
+    final int offset1 = await NTP.getNtpOffset(localTime: DateTime.now());
+    ntpTime = _myTime.add(Duration(milliseconds: offset1));
+    print("$_myTime");
+    print("${DateTime.now()}");
+    return ntpTime;
+  }*/
+
+  _initPlatformState() async {
+    bool initialized = await TrueTime.init();
+    setState(() {
+      _initialized = initialized;
+    });
+    _updateCurrentTime();
+  }
+
+  _updateCurrentTime() async {
+    DateTime now = await TrueTime.now();
+    print("$now");
+    setState(() {
+      _currentTime = now;
+    });
+    print("$_currentTime");
+  }
+
+  sendMessage() async {
+    //Future<DateTime> ntpTime = timeset();
     if (messageController.text.isNotEmpty) {
       Map<String, dynamic> messageMap = {
         "message": messageController.text,
         "sendBy": Constants1.myName1,
-        "time": DateTime.now().millisecondsSinceEpoch
+
+        ///TODO
+        "time": _currentTime,
       };
       databaseMethods.addConversationMessages(widget.chatRoomId, messageMap);
       //the next line clears the message from the text field once it's send
       messageController.text = "";
     }
-  }
-
-  @override
-  void initState() {
-    databaseMethods.getConversationMessages(widget.chatRoomId).then((value) {
-      setState(() {
-        chatMessageStream = value;
-      });
-    });
-    super.initState();
   }
 
   @override
@@ -86,6 +124,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     ),
                     GestureDetector(
                       onTap: () {
+                        _updateCurrentTime();
                         sendMessage();
                       },
                       child: Container(
